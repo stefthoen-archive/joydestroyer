@@ -12,6 +12,7 @@ public class Player : MonoBehaviour {
 	private tk2dSpriteAnimator _shipAnim;
 	private tk2dSpriteAnimator _boostAnim;
 	private float _boostSpeed = 3.0f;
+	private float _startY = 10f;
 
 	void Start () {
 		_game = transform.parent.parent.GetComponent<Game>();
@@ -61,6 +62,14 @@ public class Player : MonoBehaviour {
 					_boostAnim.Play("BoostOn");
 					_game.speed += _boostSpeed;
 					_isVerticalAxisInUse = true;
+				}
+			}
+
+			if (_isVerticalAxisInUse) {
+				newPosition.y -= Time.deltaTime * _boostSpeed;
+			} else {
+				if (newPosition.y < _startY) {
+					newPosition.y += Time.deltaTime * _boostSpeed * 0.75f;
 				}
 			}
 
