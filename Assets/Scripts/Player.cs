@@ -7,13 +7,17 @@ public class Player : MonoBehaviour {
 	public AudioClip MoveRight;
 	private Game _game;
 	private Level _level;
-	private bool _isAxisInUse = false;
-	private tk2dSpriteAnimator anim;
+	private bool _isHorizontalAxisInUse = false;
+	private bool _isVerticalAxisInUse = false;
+	private tk2dSpriteAnimator _shipAnim;
+	private tk2dSpriteAnimator _boostAnim;
+	private float _boostSpeed = 3.0f;
 
 	void Start () {
 		_game = transform.parent.parent.GetComponent<Game>();
 		_level = transform.parent.GetComponent<Level>();
-		anim = GetComponent<tk2dSpriteAnimator>();
+		_shipAnim = GetComponent<tk2dSpriteAnimator>();
+		_boostAnim = transform.Find("Boost").GetComponent<tk2dSpriteAnimator>();
 	}
 
 	void Update () {
@@ -24,30 +28,49 @@ public class Player : MonoBehaviour {
 			// Go left
 			if (Input.GetAxisRaw("Horizontal") < 0 && transform.position.x > _level.borderLeft)
 			{
-				if (_isAxisInUse == false)
+				if (_isHorizontalAxisInUse == false)
 				{
-					anim.PlayFromFrame("MoveLeft", 0);
+					_shipAnim.PlayFromFrame("MoveLeft", 0);
 					audio.PlayOneShot(MoveLeft);
 					newPosition.x--;
-					_isAxisInUse = true;
+					_isHorizontalAxisInUse = true;
 				}
 			}
 			// Go right
 			if (Input.GetAxisRaw("Horizontal") > 0 && transform.position.x < _level.borderRight)
 			{
-				if (_isAxisInUse == false) 
+				if (_isHorizontalAxisInUse == false) 
 				{
-					anim.PlayFromFrame("MoveRight", 0);
+					_shipAnim.PlayFromFrame("MoveRight", 0);
 					audio.PlayOneShot(MoveRight);
 					newPosition.x++;
 
-					_isAxisInUse = true;
+					_isHorizontalAxisInUse = true;
 				}
 			}
 
 			if (Input.GetAxisRaw("Horizontal") == 0)
 			{
-				_isAxisInUse = false;
+				_isHorizontalAxisInUse = false;
+			}
+
+			// Use boost
+			if (Input.GetAxisRaw("Vertical") < 0) {
+				if (_isVerticalAxisInUse == false) 
+				{
+					_boostAnim.Play("BoostOn");
+					_game.speed += _boostSpeed;
+					_isVerticalAxisInUse = true;
+				}
+			}
+
+			if (Input.GetAxisRaw("Vertical") == 0)
+			{
+				if (_isVerticalAxisInUse) { 
+					_boostAnim.Play("BoostOff");
+					_game.speed -= _boostSpeed;
+					_isVerticalAxisInUse = false;
+				}
 			}
 		}
 

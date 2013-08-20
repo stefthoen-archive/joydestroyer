@@ -5,10 +5,10 @@ public class Level : MonoBehaviour {
 
 	public Transform bgScroll;
 
+	private Game _game;
 	private int _levelWidth = 6;
 	private int _levelHeight = 12;
 	private int _borderLeft = 5; 
-	private float _speed = 3.0f;
 	private Transform[] _bgScroll = new Transform[3];
 
 	public int levelWidth {
@@ -25,6 +25,8 @@ public class Level : MonoBehaviour {
 
 
 	void Start () {
+		_game = transform.parent.GetComponent<Game>();
+
 		for (int x = 0; x < 3; x++) {
 			_bgScroll[x] = Instantiate(bgScroll) as Transform;
 			_bgScroll[x].transform.parent = transform;
@@ -54,13 +56,12 @@ public class Level : MonoBehaviour {
 				}
 
 				Vector3 newPosition = _bgScroll[bottomBG].position;
-				Debug.Log(newPosition.y);
 				newPosition.y = newPosition.y - 12;
 
 				_bgScroll[x].position = new Vector3(transform.position.x, newPosition.y, 10);
 			}
 
-			_bgScroll[x].position = new Vector3(_bgScroll[x].position.x, _bgScroll[x].position.y + _speed * Time.deltaTime, _bgScroll[x].position.z);	
+			_bgScroll[x].position = new Vector3(_bgScroll[x].position.x, _bgScroll[x].position.y + _game.speed * Time.deltaTime, _bgScroll[x].position.z);	
 		}
 	}
 
